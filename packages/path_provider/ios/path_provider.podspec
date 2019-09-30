@@ -11,7 +11,7 @@ A Flutter plugin for getting commonly used locations on the filesystem.
   s.homepage         = 'https://github.com/flutter/plugins/tree/master/packages/path_provider'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
-  s.source           = { :path => '.' }
+  s.source           = { "git" => "https://github.com/CodeEagle/plugins.git" }
   s.source_files = 'packages/path_provider/ios/Classes/**/*'
   s.public_header_files = 'packages/path_provider/ios/Classes/**/*.h'
   s.dependency 'Flutter'
