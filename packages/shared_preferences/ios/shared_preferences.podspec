@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
 A Flutter plugin for reading and writing simple key-value pairs.
                        DESC
   s.homepage         = 'https://github.com/flutter/plugins/tree/master/packages/shared_preferences'
-  s.license          = { :file => '../LICENSE' }
+  s.license          = { :file => 'packages/shared_preferences/LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { "git" => "https://github.com/CodeEagle/plugins.git", }
   s.source_files = 'packages/shared_preferences/ios/Classes/**/*'
