@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
 A Flutter plugin for getting commonly used locations on the filesystem.
                        DESC
   s.homepage         = 'https://github.com/flutter/plugins/tree/master/packages/path_provider'
-  s.license          = { :file => '../LICENSE' }
+  s.license          = { :file => 'packages/path_provider/LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { "git" => "https://github.com/CodeEagle/plugins.git" }
   s.source_files = 'packages/path_provider/ios/Classes/**/*'
