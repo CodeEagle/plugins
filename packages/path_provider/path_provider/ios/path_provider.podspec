@@ -12,10 +12,10 @@ Downloaded by pub (not CocoaPods).
   s.homepage         = 'https://github.com/flutter/plugins'
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
-  s.source           = { :http => 'https://github.com/flutter/plugins/tree/master/packages/path_provider/path_provider' }
+  s.source           = { "git" => "https://github.com/CodeEagle/plugins.git" }
   s.documentation_url = 'https://pub.dev/packages/path_provider'
-  s.source_files = 'ios/Classes/**/*'
-  s.public_header_files = 'ios/Classes/**/*.h'
+  s.source_files = 'packages/path_provider/path_provider/ios/Classes/**/*'
+  s.public_header_files = 'packages/path_provider/path_provider/ios/Classes/**/*.h'
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }

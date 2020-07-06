@@ -11,10 +11,10 @@ Wraps NSUserDefaults, providing a persistent store for simple key-value pairs.
   s.homepage         = 'https://github.com/flutter/plugins'
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
-  s.source           = { :http => 'https://github.com/flutter/plugins/tree/master/packages/shared_preferences/shared_preferences' }
+  s.source           = { "git" => "https://github.com/CodeEagle/plugins.git" }
   s.documentation_url = 'https://pub.dev/packages/shared_preferences'
-  s.source_files = 'ios/Classes/**/*'
-  s.public_header_files = 'ios/Classes/**/*.h'
+  s.source_files = 'packages/shared_preferences/shared_preferences/ios/Classes/**/*'
+  s.public_header_files = 'packages/shared_preferences/shared_preferences/ios/Classes/**/*.h'
   s.dependency 'Flutter'
   
   s.platform = :ios, '8.0'
