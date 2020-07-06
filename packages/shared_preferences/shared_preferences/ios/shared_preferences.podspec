@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
 Wraps NSUserDefaults, providing a persistent store for simple key-value pairs.
                        DESC
   s.homepage         = 'https://github.com/flutter/plugins'
-  s.license          = { :type => 'BSD', :file => '../LICENSE' }
+  s.license          = { :type => 'BSD', :file => 'packages/shared_preferences/shared_preferences/LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { "git" => "https://github.com/CodeEagle/plugins.git" }
   s.documentation_url = 'https://pub.dev/packages/shared_preferences'

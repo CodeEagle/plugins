@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
 A new flutter plugin project.
                        DESC
   s.homepage         = 'http://example.com'
-  s.license          = { :file => '../LICENSE' }
+  s.license          = { :file => 'packages/camera/LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { "git" => "https://github.com/CodeEagle/plugins.git" }
   s.source_files = 'packages/camera/ios/Classes/**/*'

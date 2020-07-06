@@ -10,7 +10,7 @@ A Flutter plugin for getting commonly used locations on the filesystem.
 Downloaded by pub (not CocoaPods).
                        DESC
   s.homepage         = 'https://github.com/flutter/plugins'
-  s.license          = { :type => 'BSD', :file => '../LICENSE' }
+  s.license          = { :type => 'BSD', :file => 'packages/path_provider/path_provider/LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { "git" => "https://github.com/CodeEagle/plugins.git" }
   s.documentation_url = 'https://pub.dev/packages/path_provider'
