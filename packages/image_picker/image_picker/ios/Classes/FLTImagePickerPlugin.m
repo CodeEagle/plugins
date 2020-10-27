@@ -9,11 +9,12 @@
 #import <Photos/Photos.h>
 #import <UIKit/UIKit.h>
 
+#import "FLTImagePickerController.h"
 #import "FLTImagePickerImageUtil.h"
 #import "FLTImagePickerMetaDataUtil.h"
 #import "FLTImagePickerPhotoAssetUtil.h"
 
-@interface FLTImagePickerPlugin () <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface FLTImagePickerPlugin ()
 
 @property(copy, nonatomic) FlutterResult result;
 
@@ -24,7 +25,7 @@ static const int SOURCE_GALLERY = 1;
 
 @implementation FLTImagePickerPlugin {
   NSDictionary *_arguments;
-  UIImagePickerController *_imagePickerController;
+  FLTImagePickerController *_imagePickerController;
   UIImagePickerControllerCameraDevice _device;
 }
 
@@ -64,12 +65,12 @@ static const int SOURCE_GALLERY = 1;
                                     message:@"Cancelled by a second request"
                                     details:nil]);
     self.result = nil;
+    return;
   }
 
+  _imagePickerController = [[FLTImagePickerController alloc] initWithPlugin:self];
+
   if ([@"pickImage" isEqualToString:call.method]) {
-    _imagePickerController = [[UIImagePickerController alloc] init];
-    _imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
-    _imagePickerController.delegate = self;
     _imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage ];
 
     self.result = result;
@@ -95,9 +96,6 @@ static const int SOURCE_GALLERY = 1;
         break;
     }
   } else if ([@"pickVideo" isEqualToString:call.method]) {
-    _imagePickerController = [[UIImagePickerController alloc] init];
-    _imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
-    _imagePickerController.delegate = self;
     _imagePickerController.mediaTypes = @[
       (NSString *)kUTTypeMovie, (NSString *)kUTTypeAVIMovie, (NSString *)kUTTypeVideo,
       (NSString *)kUTTypeMPEG4
@@ -142,9 +140,7 @@ static const int SOURCE_GALLERY = 1;
       [UIImagePickerController isCameraDeviceAvailable:_device]) {
     _imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     _imagePickerController.cameraDevice = _device;
-    [[self viewControllerWithWindow:nil] presentViewController:_imagePickerController
-                                                      animated:YES
-                                                    completion:nil];
+    [self PresentImagePickerController];
   } else {
     [[[UIAlertView alloc] initWithTitle:@"Error"
                                 message:@"Camera not available."
@@ -249,20 +245,20 @@ static const int SOURCE_GALLERY = 1;
 - (void)showPhotoLibrary {
   // No need to check if SourceType is available. It always is.
   _imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+  [self PresentImagePickerController];
+}
+
+- (void)PresentImagePickerController {
   [[self viewControllerWithWindow:nil] presentViewController:_imagePickerController
                                                     animated:YES
                                                   completion:nil];
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker
-    didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
+- (void)FinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *_Nonnull)info
+                        completion:(void (^)(void))completion {
   NSURL *videoURL = [info objectForKey:UIImagePickerControllerMediaURL];
-  [_imagePickerController dismissViewControllerAnimated:YES completion:nil];
-  // The method dismissViewControllerAnimated does not immediately prevent
-  // further didFinishPickingMediaWithInfo invocations. A nil check is necessary
-  // to prevent below code to be unwantly executed multiple times and cause a
-  // crash.
   if (!self.result) {
+    completion();
     return;
   }
   if (videoURL != nil) {
@@ -281,6 +277,7 @@ static const int SOURCE_GALLERY = 1;
                                             message:@"Could not cache the video file."
                                             details:nil]);
             self.result = nil;
+            completion();
             return;
           }
         }
@@ -290,6 +287,7 @@ static const int SOURCE_GALLERY = 1;
     self.result(videoURL.path);
     self.result = nil;
     _arguments = nil;
+    completion();
   } else {
     UIImage *image = [info objectForKey:UIImagePickerControllerEditedImage];
     if (image == nil) {
@@ -316,6 +314,7 @@ static const int SOURCE_GALLERY = 1;
     if (!originalAsset) {
       // Image picked without an original asset (e.g. User took a photo directly)
       [self saveImageWithPickerInfo:info image:image imageQuality:imageQuality];
+      completion();
     } else {
       __weak typeof(self) weakSelf = self;
       [[PHImageManager defaultManager]
@@ -329,19 +328,43 @@ static const int SOURCE_GALLERY = 1;
                                                        maxWidth:maxWidth
                                                       maxHeight:maxHeight
                                                    imageQuality:imageQuality];
+                       completion();
                      }];
     }
   }
 }
 
+- (void)imagePickerController:(UIImagePickerController *)picker
+    didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
+  [self FinishPickingMediaWithInfo:info
+                        completion:^{
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                            // Dismissing the image picker before cleaning up leads to a race
+                            // condition, where the result is not cleaned before the next image
+                            // picker is brought up. So we dismiss the `_imagePickerController` as
+                            // the last step.
+                            [self->_imagePickerController dismissViewControllerAnimated:YES
+                                                                             completion:nil];
+                          });
+                        }];
+}
+
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-  [_imagePickerController dismissViewControllerAnimated:YES completion:nil];
+  [self handleImagePickerControllerDismissed];
+}
+
+- (void)handleImagePickerControllerDismissed {
   if (!self.result) {
+    [_imagePickerController dismissViewControllerAnimated:YES completion:nil];
     return;
   }
   self.result(nil);
   self.result = nil;
   _arguments = nil;
+  // Dismissing the image picker before cleaning up leads to a race condition,
+  // where the result is not cleaned before the next image picker is brought up.
+  // So we dismiss the `_imagePickerController` as the last step.
+  [_imagePickerController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)saveImageWithOriginalImageData:(NSData *)originalImageData

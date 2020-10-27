@@ -14,7 +14,7 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/plugins/tree/master/packages/image_picker' }
   s.documentation_url = 'https://pub.dev/packages/image_picker'
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'packages/image_picker/image_picker/ios/Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
